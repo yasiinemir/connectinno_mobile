@@ -3,6 +3,7 @@ import 'package:connectionno_mobile/data/repositories/auth_repository.dart';
 import 'package:connectionno_mobile/data/repositories/auth_repository_impl.dart';
 import 'package:connectionno_mobile/data/repositories/note_repository.dart';
 import 'package:connectionno_mobile/data/repositories/note_repository_impl.dart';
+import 'package:connectionno_mobile/logic/auth_bloc/auth_bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -28,4 +29,5 @@ Future<void> init() async {
   sl.registerLazySingleton<NoteRepository>(() => NoteRepositoryImpl(dio: sl(), noteBox: sl()));
 
   sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl());
+  sl.registerFactory(() => AuthBloc(authRepository: sl()));
 }
