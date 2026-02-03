@@ -1,10 +1,4 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
-
 part of 'note_model.dart';
-
-// **************************************************************************
-// TypeAdapterGenerator
-// **************************************************************************
 
 class NoteModelAdapter extends TypeAdapter<NoteModel> {
   @override
@@ -50,7 +44,5 @@ class NoteModelAdapter extends TypeAdapter<NoteModel> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is NoteModelAdapter &&
-          runtimeType == other.runtimeType &&
-          typeId == other.typeId;
+      other is NoteModelAdapter && runtimeType == other.runtimeType && typeId == other.typeId;
 }

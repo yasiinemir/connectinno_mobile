@@ -1,6 +1,5 @@
 import 'package:hive/hive.dart';
 
-// 👇 BU SATIR EKSİK OLDUĞU İÇİN ÇALIŞMIYORDU 👇
 part 'note_model.g.dart';
 
 @HiveType(typeId: 0)
