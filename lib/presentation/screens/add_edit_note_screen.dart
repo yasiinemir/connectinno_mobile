@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../core/constants/app_colors.dart';
 import '../../data/models/note_model.dart';
 import '../../logic/note_bloc/note_bloc.dart';
 import '../../logic/note_bloc/note_event.dart';
@@ -17,6 +16,7 @@ class AddEditNoteScreen extends StatefulWidget {
 class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
   late TextEditingController _titleController;
   late TextEditingController _contentController;
+  late bool _isReadingMode;
 
   @override
   void initState() {
@@ -24,6 +24,7 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
 
     _titleController = TextEditingController(text: widget.note?.title ?? "");
     _contentController = TextEditingController(text: widget.note?.content ?? "");
+    _isReadingMode = widget.note != null;
   }
 
   @override
@@ -65,23 +66,37 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.cardBackground,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.primary),
+          icon: Icon(Icons.arrow_back_ios_new, color: Theme.of(context).iconTheme.color),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
-          // KAYDET BUTONU
-          TextButton(
-            onPressed: _saveNote,
-            child: const Text(
-              "Bitti",
-              style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 16),
+          if (_isReadingMode)
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  _isReadingMode = false;
+                });
+              },
+              icon: Icon(Icons.edit, color: Theme.of(context).iconTheme.color),
+              tooltip: "Düzenle",
+            )
+          else
+            TextButton(
+              onPressed: _saveNote,
+              child: Text(
+                "Bitti",
+                style: TextStyle(
+                  color: Theme.of(context).iconTheme.color,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
             ),
-          ),
           const SizedBox(width: 8),
         ],
       ),
@@ -91,17 +106,18 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
           children: [
             TextField(
               controller: _titleController,
-              style: const TextStyle(
+              readOnly: _isReadingMode,
+              style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: Colors.black,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
               ),
               decoration: const InputDecoration(
                 hintText: "Başlık",
                 hintStyle: TextStyle(color: Colors.grey, fontSize: 28, fontWeight: FontWeight.bold),
                 border: InputBorder.none, // Çizgi yok
               ),
-              textInputAction: TextInputAction.next,
+              // textInputAction: TextInputAction.next,
             ),
 
             const SizedBox(height: 8),
@@ -109,7 +125,12 @@ class _AddEditNoteScreenState extends State<AddEditNoteScreen> {
             Expanded(
               child: TextField(
                 controller: _contentController,
-                style: const TextStyle(fontSize: 18, height: 1.5, color: Colors.black87),
+                readOnly: _isReadingMode,
+                style: TextStyle(
+                  fontSize: 18,
+                  height: 1.5,
+                  color: Theme.of(context).textTheme.bodyMedium?.color,
+                ),
                 decoration: const InputDecoration(
                   hintText: "Yazmaya başla...",
                   hintStyle: TextStyle(color: Colors.grey, fontSize: 18),

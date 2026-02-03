@@ -1,3 +1,4 @@
+import 'package:connectionno_mobile/logic/theme_cubit/theme_cubit.dart';
 import 'package:connectionno_mobile/presentation/screens/add_edit_note_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         bottom: false,
         child: Stack(
@@ -38,12 +39,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   const SizedBox(height: 10),
 
-                  const Text(
+                  Text(
                     "Ana Ekran",
                     style: TextStyle(
                       fontSize: 34,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -136,7 +137,9 @@ class _HomeScreenState extends State<HomeScreen> {
               bottom: 40,
               child: _buildCircleButton(
                 icon: _showFavoritesOnly ? Icons.star : Icons.star_border,
-                color: _showFavoritesOnly ? AppColors.star : Colors.grey,
+                color: _showFavoritesOnly
+                    ? AppColors.star
+                    : (Theme.of(context).iconTheme.color ?? Colors.grey),
                 onTap: () {
                   setState(() => _showFavoritesOnly = !_showFavoritesOnly);
                 },
@@ -148,7 +151,7 @@ class _HomeScreenState extends State<HomeScreen> {
               bottom: 40,
               child: _buildCircleButton(
                 icon: Icons.add,
-                color: Colors.grey,
+                color: Theme.of(context).iconTheme.color ?? Colors.grey,
                 onTap: () {
                   Navigator.push(
                     context,
@@ -161,9 +164,26 @@ class _HomeScreenState extends State<HomeScreen> {
             Positioned(
               top: 10,
               right: 10,
-              child: IconButton(
-                icon: const Icon(Icons.logout, color: Colors.grey),
-                onPressed: () => context.read<AuthBloc>().add(LogoutRequested()),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      // Şu anki tema karanlık mı kontrol et
+                      Theme.of(context).brightness == Brightness.dark
+                          ? Icons.light_mode
+                          : Icons.dark_mode,
+                      color: Theme.of(context).iconTheme.color,
+                    ),
+                    onPressed: () {
+                      final isDark = Theme.of(context).brightness == Brightness.dark;
+                      context.read<ThemeCubit>().toggleTheme(!isDark);
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.logout, color: Theme.of(context).iconTheme.color),
+                    onPressed: () => context.read<AuthBloc>().add(LogoutRequested()),
+                  ),
+                ],
               ),
             ),
           ],
@@ -183,7 +203,7 @@ class _HomeScreenState extends State<HomeScreen> {
         width: 60,
         height: 60,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(

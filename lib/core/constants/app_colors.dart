@@ -13,7 +13,7 @@ class AppColors {
 
   //Etkileşim Renkleri
   static const Color primary = Color(0xFF007AFF); // iOS Mavisi (Modern)
-  static const Color delete = Color(0xFFFF3B30); // Kırmızı
-  static const Color star = Color(0xFFFFCC00); // Sarı
+  static const Color delete = Color.fromARGB(255, 173, 11, 2); // Kırmızı
+  static const Color star = Color.fromARGB(255, 224, 181, 11); // Sarı
   static const Color pin = Color(0xFF5856D6); // Morumsu Mavi (Pin için)
 }

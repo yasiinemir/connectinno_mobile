@@ -1,4 +1,6 @@
+import 'package:connectionno_mobile/core/constants/app_theme.dart';
 import 'package:connectionno_mobile/core/network/api_manager.dart';
+import 'package:connectionno_mobile/logic/theme_cubit/theme_cubit.dart';
 import 'package:connectionno_mobile/presentation/screens/home_screen.dart';
 import 'package:connectionno_mobile/presentation/screens/login_screen.dart';
 import 'package:flutter/material.dart';
@@ -77,23 +79,30 @@ class MyApp extends StatelessWidget {
         BlocProvider<NoteBloc>(
           create: (context) => NoteBloc(noteRepository: noteRepository)..add(LoadNotes()),
         ),
+        BlocProvider<ThemeCubit>(create: (context) => ThemeCubit()),
       ],
-      child: MaterialApp(
-        title: 'Offline First Notes',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
+      child: BlocBuilder<ThemeCubit, ThemeMode>(
+        builder: (context, themeMode) {
+          return MaterialApp(
+            title: 'Offline First Notes',
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.lightTheme, // Aydınlık
+            darkTheme: AppTheme.darkTheme, // Karanlık
+            themeMode: themeMode,
 
-        home: BlocBuilder<AuthBloc, AuthState>(
-          builder: (context, state) {
-            if (state is Authenticated) {
-              return const HomeScreen();
-            } else if (state is Unauthenticated) {
-              return const LoginScreen();
-            }
+            home: BlocBuilder<AuthBloc, AuthState>(
+              builder: (context, state) {
+                if (state is Authenticated) {
+                  return const HomeScreen();
+                } else if (state is Unauthenticated) {
+                  return const LoginScreen();
+                }
 
-            return const Scaffold(body: Center(child: CircularProgressIndicator()));
-          },
-        ),
+                return const Scaffold(body: Center(child: CircularProgressIndicator()));
+              },
+            ),
+          );
+        },
       ),
     );
   }

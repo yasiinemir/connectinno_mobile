@@ -65,12 +65,12 @@ class NoteCard extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              border: Border.all(color: AppColors.borderColor, width: 1),
-              color: AppColors.cardBackground,
+              border: Border.all(color: Theme.of(context).dividerColor, width: 1),
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withAlpha(30),
+                  color: Theme.of(context).shadowColor.withAlpha(30),
                   blurRadius: 10,
                   offset: const Offset(0, 20),
                 ),
@@ -84,16 +84,19 @@ class NoteCard extends StatelessWidget {
                     children: [
                       Text(
                         note.title,
-                        style: AppTextStyles.header(
-                          context,
-                        ).copyWith(color: AppColors.textPrimary, fontSize: 16),
+                        style: AppTextStyles.header(context).copyWith(
+                          color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black,
+                          fontSize: 16,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 4),
                       Text(
                         note.content,
-                        style: AppTextStyles.body(context).copyWith(color: AppColors.textSecondary),
+                        style: AppTextStyles.body(context).copyWith(
+                          color: Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey,
+                        ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
