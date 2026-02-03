@@ -1,4 +1,6 @@
 import 'package:connectionno_mobile/data/models/note_model.dart';
+import 'package:connectionno_mobile/data/repositories/auth_repository.dart';
+import 'package:connectionno_mobile/data/repositories/auth_repository_impl.dart';
 import 'package:connectionno_mobile/data/repositories/note_repository.dart';
 import 'package:connectionno_mobile/data/repositories/note_repository_impl.dart';
 import 'package:dio/dio.dart';
@@ -24,4 +26,6 @@ Future<void> init() async {
   );
 
   sl.registerLazySingleton<NoteRepository>(() => NoteRepositoryImpl(dio: sl(), noteBox: sl()));
+
+  sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl());
 }
