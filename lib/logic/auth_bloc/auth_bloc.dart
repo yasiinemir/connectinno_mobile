@@ -1,3 +1,4 @@
+import 'package:connectionno_mobile/core/errors/auth_error_handler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/repositories/auth_repository.dart';
 import 'auth_event.dart';
@@ -22,8 +23,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         await authRepository.signIn(event.email, event.password);
         emit(const Authenticated());
       } catch (e) {
-        emit(AuthError(e.toString()));
-        emit(Unauthenticated()); // Hatadan sonra login sayfasına dönsün
+        emit(AuthError(AuthErrorHandler.from(e)));
+        emit(Unauthenticated());
       }
     });
 
@@ -31,9 +32,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthLoading());
       try {
         await authRepository.signUp(event.email, event.password);
-        emit(const Authenticated()); // Kayıt olunca direkt içeri alıyoruz
+        emit(const Authenticated());
       } catch (e) {
-        emit(AuthError(e.toString()));
+        emit(AuthError(AuthErrorHandler.from(e)));
         emit(Unauthenticated());
       }
     });
