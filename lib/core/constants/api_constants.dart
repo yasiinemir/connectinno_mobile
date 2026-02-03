@@ -5,4 +5,6 @@ class ApiConstants {
   static const String baseUrl = 'http://10.0.2.2:8000';
   //FİZİKSEL
   // static const String baseUrl = 'http://10.0.2.2:8000';
+
+  static const String notesEndpoint = '/notes';
 }

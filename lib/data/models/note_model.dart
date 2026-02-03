@@ -1,48 +1,62 @@
 import 'package:hive/hive.dart';
 
-part 'note_model.g.dart';
+part 'note_model.g.dart'; // Bu satır kızaracak, korkma. Build runner çalışınca düzelecek.
 
 @HiveType(typeId: 0)
 class NoteModel extends HiveObject {
   @HiveField(0)
-  String? id;
+  final String id;
 
   @HiveField(1)
-  String title;
+  final String title;
 
   @HiveField(2)
-  String content;
+  final String content;
 
   @HiveField(3)
-  bool isPinned;
+  final DateTime createdAt;
 
   @HiveField(4)
-  DateTime createdAt;
+  bool isSynced; // İnternet yokken false olacak, sunucuya gidince true olacak.
 
   @HiveField(5)
-  bool isSynced;
+  bool isFavorite; // Favorilere alma
+
+  @HiveField(6)
+  bool isPinned; // Başa sabitleme
 
   NoteModel({
-    this.id,
+    required this.id,
     required this.title,
     required this.content,
-    this.isPinned = false,
     required this.createdAt,
-    this.isSynced = true,
+    this.isSynced = false,
+    this.isFavorite = false,
+    this.isPinned = false,
   });
 
+  // API'den gelen JSON'ı modele çevirmek için
   factory NoteModel.fromJson(Map<String, dynamic> json) {
     return NoteModel(
-      id: json['id']?.toString(),
+      id: json['id'] ?? '',
       title: json['title'] ?? '',
       content: json['content'] ?? '',
+      createdAt: DateTime.parse(json['created_at'] ?? DateTime.now().toIso8601String()),
+      isSynced: true, // Sunucudan geliyorsa zaten senkronizedir
+      isFavorite: json['is_favorite'] ?? false,
       isPinned: json['is_pinned'] ?? false,
-      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : DateTime.now(),
-      isSynced: true,
     );
   }
 
+  // Modeli API'ye göndermek için JSON'a çevirmek
   Map<String, dynamic> toJson() {
-    return {"title": title, "content": content, "is_pinned": isPinned};
+    return {
+      "id": id,
+      "title": title,
+      "content": content,
+      "created_at": createdAt.toIso8601String(),
+      "is_favorite": isFavorite,
+      "is_pinned": isPinned,
+    };
   }
 }
