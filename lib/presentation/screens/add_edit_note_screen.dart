@@ -4,10 +4,21 @@ import '../../data/models/note_model.dart';
 import '../../logic/note_bloc/note_bloc.dart';
 import '../../logic/note_bloc/note_event.dart';
 
+// ignore: must_be_immutable
 class AddEditNoteScreen extends StatefulWidget {
   final NoteModel? note;
 
-  const AddEditNoteScreen({super.key, this.note});
+  bool isAnalyzing = false;
+  String? currentVideoId; // Çalan video ID'si
+  String? currentSongName; // Çalan şarkı adı
+
+  AddEditNoteScreen({
+    super.key,
+    this.note,
+    this.isAnalyzing = false,
+    this.currentVideoId,
+    this.currentSongName,
+  });
 
   @override
   State<AddEditNoteScreen> createState() => _AddEditNoteScreenState();

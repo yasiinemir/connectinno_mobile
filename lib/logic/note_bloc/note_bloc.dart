@@ -44,5 +44,9 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
         emit(NoteError("Not silinemedi: $e"));
       }
     });
+
+    on<ClearNotes>((event, emit) {
+      emit(NoteInitial());
+    });
   }
 }

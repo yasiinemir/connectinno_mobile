@@ -1,5 +1,7 @@
 import 'package:connectionno_mobile/logic/theme_cubit/theme_cubit.dart';
 import 'package:connectionno_mobile/presentation/screens/add_edit_note_screen.dart';
+import 'package:connectionno_mobile/presentation/widgets/music_player_widget.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/constants/app_colors.dart';
@@ -20,9 +22,19 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Yeni kullanıcının notlarını getir
+    context.read<NoteBloc>().add(LoadNotes());
+  }
+
   final TextEditingController _searchController = TextEditingController();
   String _searchText = "";
   bool _showFavoritesOnly = false;
+  bool _isAnalyzing = false;
+  String? _currentVideoId;
+  String? _currentSongName;
 
   @override
   Widget build(BuildContext context) {
@@ -120,6 +132,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                   );
                                   context.read<NoteBloc>().add(UpdateNote(updated));
                                 },
+                                onPlayMusic: () {
+                                  _playMusicForNote(note.content);
+                                },
                               );
                             },
                           );
@@ -155,7 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const AddEditNoteScreen()),
+                    MaterialPageRoute(builder: (context) => AddEditNoteScreen()),
                   );
                 },
               ),
@@ -186,6 +201,41 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
+
+            // ... Stack children listesinin EN SONUNA (Positioned butonlardan sonra) ekle ...
+
+            // YÜKLENİYOR GÖSTERGESİ (Ekranın ortasında)
+            if (_isAnalyzing)
+              Container(
+                color: Colors.black45,
+                child: const Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CircularProgressIndicator(color: Colors.white),
+                      SizedBox(height: 10),
+                      Text("AI Ruh Halini Analiz Ediyor...", style: TextStyle(color: Colors.white)),
+                    ],
+                  ),
+                ),
+              ),
+
+            // MÜZİK PLAYER (Ekranın Altında)
+            if (_currentVideoId != null)
+              Positioned(
+                bottom: 20, // Butonların üstünde dursun
+                left: 16,
+                right: 16,
+                child: MusicPlayerWidget(
+                  videoId: _currentVideoId!,
+                  songName: _currentSongName ?? "Bilinmeyen Parça",
+                  onClose: () {
+                    setState(() {
+                      _currentVideoId = null; // Kapat
+                    });
+                  },
+                ),
+              ),
           ],
         ),
       ),
@@ -216,5 +266,48 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Icon(icon, color: color, size: 30),
       ),
     );
+  }
+
+  // AI Müzik Analiz Fonksiyonu
+  Future<void> _playMusicForNote(String noteContent) async {
+    if (noteContent.isEmpty) return;
+
+    setState(() {
+      _isAnalyzing = true;
+      _currentVideoId = null; // Varsa eskisini durdur
+    });
+
+    try {
+      final dio = Dio();
+      // Emulator için 10.0.2.2, Gerçek cihaz için Bilgisayarın IP'si
+      final response = await dio.post(
+        'http://10.0.2.2:8000/recommend-music',
+        data: {"text": noteContent},
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          _currentVideoId = response.data['video_id'];
+          _currentSongName = response.data['mood_description'];
+        });
+
+        // Kullanıcıya bilgi ver
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Mod: $_currentSongName"),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("AI Bağlantı Hatası: Lütfen Backend'i açın.")));
+    } finally {
+      setState(() {
+        _isAnalyzing = false;
+      });
+    }
   }
 }

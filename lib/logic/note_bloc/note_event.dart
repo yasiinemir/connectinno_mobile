@@ -10,6 +10,8 @@ abstract class NoteEvent extends Equatable {
 
 class LoadNotes extends NoteEvent {}
 
+class ClearNotes extends NoteEvent {}
+
 class AddNote extends NoteEvent {
   final String title;
   final String content;

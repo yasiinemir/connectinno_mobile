@@ -10,6 +10,7 @@ class NoteCard extends StatelessWidget {
   final VoidCallback onDelete;
   final VoidCallback onFavorite;
   final VoidCallback onPin;
+  final VoidCallback onPlayMusic;
 
   const NoteCard({
     super.key,
@@ -18,6 +19,7 @@ class NoteCard extends StatelessWidget {
     required this.onDelete,
     required this.onFavorite,
     required this.onPin,
+    required this.onPlayMusic,
   });
 
   @override
@@ -27,6 +29,20 @@ class NoteCard extends StatelessWidget {
 
       child: Slidable(
         key: Key(note.id),
+
+        startActionPane: ActionPane(
+          motion: const ScrollMotion(),
+          children: [
+            SlidableAction(
+              onPressed: (_) => onPlayMusic(),
+              backgroundColor: const Color(0xFF2196F3), // Mavi renk
+              foregroundColor: Colors.white,
+              icon: Icons.music_note,
+              label: 'AI Modu',
+              borderRadius: const BorderRadius.horizontal(left: Radius.circular(12)),
+            ),
+          ],
+        ),
 
         endActionPane: ActionPane(
           motion: const ScrollMotion(),
